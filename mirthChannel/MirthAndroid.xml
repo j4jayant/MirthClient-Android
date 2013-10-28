@@ -1,0 +1,281 @@
+<channel>
+  <id>20f41ca1-fb55-4e90-9aa2-236dc881b5d2</id>
+  <name>MirthAndroid</name>
+  <description></description>
+  <enabled>true</enabled>
+  <version>2.2.3.6825</version>
+  <lastModified>
+    <time>1382728452000</time>
+    <timezone>Asia/Kolkata</timezone>
+  </lastModified>
+  <revision>87</revision>
+  <sourceConnector>
+    <name>sourceConnector</name>
+    <properties>
+      <property name="DataType">HTTP Listener</property>
+      <property name="host">0.0.0.0</property>
+      <property name="port">8011</property>
+      <property name="receiverBodyOnly">1</property>
+      <property name="receiverCharset">UTF-8</property>
+      <property name="receiverContextPath">mirthadmin</property>
+      <property name="receiverResponse">Destination 1</property>
+      <property name="receiverResponseContentType">text/xml</property>
+      <property name="receiverResponseHeaders">&lt;linked-hash-map/&gt;</property>
+      <property name="receiverResponseStatusCode"></property>
+      <property name="receiverTimeout">10000</property>
+    </properties>
+    <transformer>
+      <steps/>
+      <inboundTemplate encoding="base64"></inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundProtocol>XML</inboundProtocol>
+      <outboundProtocol>XML</outboundProtocol>
+      <inboundProperties>
+        <property name="stripNamespaces">true</property>
+      </inboundProperties>
+      <outboundProperties>
+        <property name="stripNamespaces">true</property>
+      </outboundProperties>
+    </transformer>
+    <filter>
+      <rules/>
+    </filter>
+    <transportName>HTTP Listener</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+    <version>2.2.3.6825</version>
+  </sourceConnector>
+  <destinationConnectors>
+    <connector>
+      <name>Destination 1</name>
+      <properties>
+        <property name="DataType">JavaScript Writer</property>
+        <property name="host">sink</property>
+        <property name="script">
+var msgData = new XML(messageObject.getTransformedData());
+
+var url = msgData[&apos;url&apos;].toString();
+var username = msgData[&apos;user&apos;].toString();
+var password = msgData[&apos;password&apos;].toString();
+var action = msgData[&apos;action&apos;].toString();
+var cId = msgData[&apos;channelId&apos;].toString();
+
+var client = new com.mirth.connect.client.core.Client(url,500);
+
+var loginStatus = client.login(username, password, &apos;2.2.3.6825&apos;);
+
+var listNode = &apos;&apos;;
+
+if(loginStatus.getStatus().toString().startsWith(&apos;SUCCESS&apos;))
+{
+	if(action == &quot;DASHBOARD&quot;)
+		listNode = getChannelList(client);
+	else if(action == &quot;STOP&quot;)
+		listNode = stopChannel(client);
+	else if(action == &quot;START&quot;)
+		listNode = startChannel(client);
+	else if(action == &quot;PAUSE&quot;)
+		listNode = pauseChannel(client);
+	else if(action == &quot;RESUME&quot;)
+		listNode = resumeChannel(client);
+	else if(action == &quot;UNDEPLOY&quot;)
+		listNode = undeployChannel(client);
+	else
+		listNode = getChannelList(client);
+}
+else
+{
+	listNode = &apos;&lt;channelList&gt;&lt;error&gt;LOGIN&lt;/error&gt;&lt;/channelList&gt;&apos;;
+}
+
+function getChannelList(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+	
+	try
+	{
+		for each(cs in client.getChannelStatusList().toArray())
+		{
+			if(cs.getChannelId() == channelId)
+				continue;
+ 
+			var channelIdNode = &apos;&lt;channelId&gt;&apos; + cs.getChannelId() + &apos;&lt;/channelId&gt;&apos;;
+			var channelNameNode = &apos;&lt;channelName&gt;&apos; + cs.getName() + &apos;&lt;/channelName&gt;&apos;;
+			var channelStatusNode = &apos;&lt;channelStatus&gt;&apos; + cs.getState().name() + &apos;&lt;/channelStatus&gt;&apos;;
+			var channelRevisionNode = &apos;&lt;revision&gt;&apos; + cs.getDeployedRevisionDelta() + &apos;&lt;/revision&gt;&apos;;
+			var deployedDate = cs.getDeployedDate().getTime().toLocaleString() //cs.getDeployedDate().getTime().getYear() + &apos;-&apos; + cs.getDeployedDate().getTime().getMonth() + &apos;-&apos; + cs.getDeployedDate().getTime().getDate() + &apos; &apos; + cs.getDeployedDate().getTime().getHours() + &apos;:&apos; + cs.getDeployedDate().getTime().getMinutes() + &apos;:&apos; + cs.getDeployedDate().getTime().getSeconds();
+			var channelLastDeployedNode = &apos;&lt;lastDeployed&gt;&apos; + deployedDate + &apos;&lt;/lastDeployed&gt;&apos;;
+
+			var cstat = client.getStatistics(cs.getChannelId());
+
+			var channelReceivedNode = &apos;&lt;received&gt;&apos; + cstat.getReceived() + &apos;&lt;/received&gt;&apos;;
+			var channelFilteredNode = &apos;&lt;filtered&gt;&apos; + cstat.getQueued() + &apos;&lt;/filtered&gt;&apos;;
+			var channelQueuedNode = &apos;&lt;queued&gt;&apos; + cstat.getQueued() + &apos;&lt;/queued&gt;&apos;;
+			var channelSentNode = &apos;&lt;sent&gt;&apos; + cstat.getSent() + &apos;&lt;/sent&gt;&apos;;
+			var channelErroredNode = &apos;&lt;errored&gt;&apos; + cstat.getError() + &apos;&lt;/errored&gt;&apos;;
+			var channelAlteredNode = &apos;&lt;altered&gt;&apos; + cstat.getQueued() + &apos;&lt;/altered&gt;&apos;;
+			var channelConnectionNode = &apos;&lt;connection&gt;&apos; + cstat.getQueued() + &apos;&lt;/connection&gt;&apos;;
+			
+
+			var channelNode = channelIdNode + channelNameNode + channelStatusNode + channelRevisionNode + channelLastDeployedNode
+					+ channelReceivedNode + channelFilteredNode + channelQueuedNode + channelSentNode + channelErroredNode
+					+ channelAlteredNode + channelConnectionNode;
+
+			listNode += &apos;&lt;channel&gt;&apos; + channelNode + &apos;&lt;/channel&gt;&apos;;
+		}
+
+		var channelResultNode = &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+		listNode += channelResultNode;
+	}
+	catch(e)
+	{
+		listNode += &apos;&lt;result&gt;0&lt;/result&gt;&lt;err&gt;&apos; + e.message + &apos;&lt;/err&gt;&apos;;
+	}
+
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+function startChannel(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+
+	try
+	{
+		client.startChannel(cId);
+		listNode += &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+	}
+	catch(e)
+	{
+		listNode += &apos;&lt;result&gt;0&lt;/result&gt;&apos;;
+		listNode += &apos;&lt;err&gt;&apos; + e.message + &apos;&lt;/err&gt;&apos;;
+	}
+	
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+function stopChannel(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+
+	try
+	{
+		client.stopChannel(cId);
+		listNode += &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+	}
+	catch(e)
+	{
+		listNode += &apos;&lt;result&gt;0&lt;/result&gt;&apos;;
+		listNode += &apos;&lt;err&gt;&apos; + e.message + &apos;&lt;/err&gt;&apos;;
+	}
+
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+function pauseChannel(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+
+	try
+	{
+		client.pauseChannel(cId);
+		listNode += &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+	}
+	catch(e)
+	{
+		listNode += &apos;&lt;result&gt;0&lt;/result&gt;&apos;;
+		listNode += &apos;&lt;err&gt;&apos; + e.message + &apos;&lt;/err&gt;&apos;;
+	}
+
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+function resumeChannel(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+
+	try
+	{
+		client.resumeChannel(cId);
+		listNode += &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+	}
+	catch(e)
+	{
+		listNode += &apos;&lt;result&gt;0&lt;/result&gt;&apos;;
+		listNode += &apos;&lt;err&gt;&apos; + e.message + &apos;&lt;/err&gt;&apos;;
+	}
+
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+function undeployChannel(client)
+{
+	listNode = &apos;&lt;channelList&gt;&apos;;
+
+	//var list = new java.util.ArrayList();
+	//list.add(cId);
+	//client.undeployChannels(list);
+	//client.deployChannels(list);
+
+	listNode += &apos;&lt;result&gt;1&lt;/result&gt;&apos;;
+
+	listNode += &apos;&lt;/channelList&gt;&apos;;
+
+	return listNode;
+}
+
+responseMap.put(&apos;Destination 1&apos;, listNode);</property>
+      </properties>
+      <transformer>
+        <steps/>
+        <inboundTemplate encoding="base64"></inboundTemplate>
+        <outboundTemplate encoding="base64"></outboundTemplate>
+        <inboundProtocol>XML</inboundProtocol>
+        <outboundProtocol>XML</outboundProtocol>
+        <inboundProperties>
+          <property name="stripNamespaces">true</property>
+        </inboundProperties>
+        <outboundProperties>
+          <property name="stripNamespaces">true</property>
+        </outboundProperties>
+      </transformer>
+      <filter>
+        <rules/>
+      </filter>
+      <transportName>JavaScript Writer</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <version>2.2.3.6825</version>
+    </connector>
+  </destinationConnectors>
+  <properties>
+    <property name="clearGlobalChannelMap">true</property>
+    <property name="dont_store_filtered">false</property>
+    <property name="encryptData">false</property>
+    <property name="error_messages_only">false</property>
+    <property name="initialState">started</property>
+    <property name="max_message_age">-1</property>
+    <property name="store_messages">false</property>
+    <property name="synchronous">true</property>
+    <property name="transactional">false</property>
+  </properties>
+  <preprocessingScript>// Modify the message variable below to pre process data
+return message;</preprocessingScript>
+  <postprocessingScript>// This script executes once after a message has been processed
+return;</postprocessingScript>
+  <deployScript>// This script executes once when the channel is deployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</deployScript>
+  <shutdownScript>// This script executes once when the channel is undeployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</shutdownScript>
+</channel>

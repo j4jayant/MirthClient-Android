@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mirth Client</string>
+    <string name="action_settings">Settings</string>
+    <string name="mirth_login">Login</string>
+    <string name="mirth_dashboard">Dashboard</string>
+    <string name="lblUrl">URL</string>
+    <string name="channelStatus">Status</string>
+    <string name="lblEqual">=</string>
+    <string name="lblUserName">User</string>
+    <string name="lblPassword">Password</string>
+    <string name="lblClientListener">Client Listener</string>
+    <string name="btnLogin">Login</string>
+    <string name="btnStartStop">Start/Stop</string>
+    <string name="btnPauseResume">Pause/Resume</string>
+	<string name="txtErrorMessage">Error</string>
+	<string name="menu_start">Start Channel</string>
+	<string name="menu_stop">Stop Channel</string>
+	<string name="menu_pause">Pause Channel</string>
+	<string name="menu_resume">Resume Channel</string>
+	<string name="chk_save">Save Settings</string>
+</resources>

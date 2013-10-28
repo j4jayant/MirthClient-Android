@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".LoginActivity" >
+
+   <TextView
+        android:id="@+id/lblUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblUrl" />
+   
+    <EditText
+        android:id="@+id/txtUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:inputType="textUri"
+        android:layout_below="@+id/lblUrl" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/lblUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblUserName" 
+        android:layout_below="@+id/txtUrl" />
+    
+    <EditText
+        android:id="@+id/txtUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:inputType="text"
+        android:layout_below="@+id/lblUserName" >
+    </EditText>
+    
+    <TextView
+        android:id="@+id/lblPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblPassword" 
+        android:layout_below="@+id/txtUserName" />
+    
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:inputType="textPassword"
+        android:layout_below="@+id/lblPassword" >
+    </EditText>
+    
+    
+    <TextView
+        android:id="@+id/lblClientListener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblClientListener"
+        android:layout_below="@+id/txtPassword" />
+     
+    <EditText
+        android:id="@+id/txtClientListener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:inputType="text"
+        android:layout_below="@+id/lblClientListener" >
+    </EditText>
+    
+    <CheckBox
+        android:id="@+id/chkSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtClientListener"
+        android:text="@string/chk_save" />
+    
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="100dp"
+        android:layout_below="@+id/chkSave"
+        android:onClick="onClick_btnLogin"
+        android:text="@string/btnLogin" />
+       
+    
+      <TextView
+          android:id="@+id/txtErrorMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/btnLogin"
+          android:text="@string/txtErrorMessage"
+          android:textColor="@color/RED" />
+      
+</RelativeLayout>

@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:id="@+id/menu_start"
+        android:title="@string/menu_start"
+        android:icon="@drawable/green" />
+    <item android:id="@+id/menu_stop"
+        android:title="@string/menu_stop"
+        android:icon="@drawable/red" />
+    <item android:id="@+id/menu_pause"
+        android:title="@string/menu_pause"
+        android:icon="@drawable/yellow" />
+    <item android:id="@+id/menu_resume"
+        android:title="@string/menu_resume"
+        android:icon="@drawable/green" />
+</menu>
